@@ -1,0 +1,137 @@
+body {
+  background-color: #aef;
+  color: #444;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 96%;
+}
+
+* {
+  font-family: Arial,sans-serif;
+  font-size: 100%;
+  border-collapse: collapse;
+}
+
+.inline,.inline:hover {
+  border: none;
+  background-color: #aef;
+  text-align: right;
+  padding: 0;
+}
+
+button,input {
+  border-radius: 8px;
+  padding: 0.3em;
+  margin: 0.2em;
+  background-color: #eee;
+}
+
+button:hover,input:hover {
+  background-color: #fff;
+  color: #000;
+}
+
+td.delete, td.play, td.playDown {
+  border-radius: 5px;
+  padding: 0.3em;
+  background-color: #eee;  
+}
+
+td.delete:hover, td.play:hover, td.playDown:hover {
+  background-color: #fff;
+  color: #000;
+}
+
+p#userlistP span:hover {
+  background-color: #fff;
+}
+
+#textInp {
+  width: 90%;
+  max-width: 30em; 
+}
+
+#chatText {
+  width: 98%; 
+  max-width: 30em; 
+  height: 7em; 
+  overflow: scroll; 
+  border: 1px gray solid;
+}
+
+fieldset {
+  margin: 0.5em;
+  padding: 0.5em;
+  width: 100%;
+}
+
+a,a:link,a:visited {
+  color: #000;
+  text-decoration: underline;
+  padding: 0.3em;  
+}
+
+a:hover {
+  background-color: #fff;
+}
+
+.ye, .alert:hover {
+  background-color: yellow; 
+}
+
+.alert {
+  background-color: #ffa;
+}
+
+#playerRoom {
+  padding: 5px;
+  width: 100%;
+  display: flex;
+}
+
+#playerRoom * {
+  min-height: 0;
+  min-width: 0;
+  /*flex: 1;*/
+}
+
+.spanName, .spanResolution, .spanBitrate {
+  position: absolute;
+  background-color: #aef;
+  padding-left: 1%;
+  color: #444;
+  margin: 0;
+}
+
+.spanName {
+  top: 0px;
+  left: 0px;
+  padding-left: 0.5em;
+  font-size: 1em;
+  opacity: 0.8;
+}
+
+.spanResolution {
+  bottom: 0px;
+  left: 0px;
+  font-size: 0.75em;
+  opacity: 0.7;
+}
+
+.spanBitrate {
+  bottom: 0px;
+  right: 0px;
+  font-size: 0.75em;
+  opacity: 0.7;
+}
+
+.nodisplay {
+  display: none;
+}
+
+#footer {
+  font-size: 0.75em;
+}
