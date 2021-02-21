@@ -6,6 +6,7 @@ jv.ViewVR = function() {
       publishIndicator = new jv.utils.Indicator("publishBtn",[["Publish"],["Unpublish"],["Connecting..."]],"v",2),
       muteIndicator = new jv.utils.Indicator("muteBtn",[["Mute"],["Unmute"]],"v",0),
       rg=new jv.ResponsiveGrid("playerRoom"),
+      bitrateSelect=$$("bitrateSelect"),
       isLandscape="ыыы";//true;
       
   function init(serverParams,callbacks) {
@@ -13,6 +14,8 @@ jv.ViewVR = function() {
     cb=callbacks;
     if ( ! aspectTimer) aspectTimer=setInterval(watchAspectRatio,1000);
     //setTimeout(function() { moveSpans("1/1"); },5000); // DEBUG
+    
+    $$("bitrateSelect").onclick=function() { cb.setBitrateCap(getBitrate()); }
     $$("sendBtn").onclick=function() { cb.sendChatMessage(takeChatMessage()); };
   }
   
@@ -31,29 +34,36 @@ jv.ViewVR = function() {
   }
       
   function adoptPublishedState(isPublished) {
-    if (isPublished === -1) {
+    if (isPublished === -1) { // new
       publishIndicator.z();//hide();
       publishIndicator.getElement().onclick=function(){};
       muteIndicator.hide();
+      bitrateSelect.style.display="none";
       toggleChat(false);
     }
-    else if (isPublished === 1) {
+    else if (isPublished === 1) { // my feed is published
       publishIndicator.unhide();
       muteIndicator.unhide();
       publishIndicator.on();
       publishIndicator.getElement().onclick=cb.unpublishOwnFeed;
       muteIndicator.off();
       muteIndicator.getElement().onclick=cb.toggleMute;
+      bitrateSelect.style.display="";
       toggleChat(true);
     }
-    else if (isPublished === 0) {
+    else if (isPublished === 0) { // my feed is unbuplished
       publishIndicator.unhide();
       muteIndicator.hide();
       publishIndicator.off();
       publishIndicator.getElement().onclick=function() { cb.publishOwnFeed(true); };
+      bitrateSelect.style.display="none";
       toggleChat(false);
     }
     else throw new Error("Wrong isPublished="+isPublished);
+  }
+  
+  function getBitrate() {
+    return jv.utils.getSelect("bitrateSelect");
   }
   
   function toggleChat(onOff) {
@@ -316,7 +326,7 @@ jv.ViewVR = function() {
     return v;
   }
 
-  return { init: init, alert: aalert, redefineExit: redefineExit, adoptPublishedState: adoptPublishedState, adjustLayout: adjustLayout, capVideo: capVideo, uncapVideo: uncapVideo, adoptVideo: adoptVideo, addVideo: addVideo, removeVideo: removeVideo, muteIndicator: muteIndicator, addToChat: addToChat };
+  return { init: init, alert: aalert, redefineExit: redefineExit, adoptPublishedState: adoptPublishedState, getBitrate: getBitrate, adjustLayout: adjustLayout, capVideo: capVideo, uncapVideo: uncapVideo, adoptVideo: adoptVideo, addVideo: addVideo, removeVideo: removeVideo, muteIndicator: muteIndicator, addToChat: addToChat };
 
 }// end ViewVR
 

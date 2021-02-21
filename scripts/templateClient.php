@@ -19,6 +19,12 @@
     <!--<a href="<?php if ( isset($pr) && $pr->checkNotEmpty("lang") && $pr->g("lang") != "en" ) echo "manual_".$pr->g("lang").".html"; else echo "manual_en.html"; ?>" target="_blank" >Help</a>-->
   <input type="button" id="publishBtn" value="Publish" title="unpublish/publish your stream" />
   <input type="button" id="muteBtn" value="Mute" title="mute/unmute your stream" />
+  <select id="bitrateSelect">
+    <option value="128000">128kbps</option>
+    <option value="256000">256kbps</option>
+    <option value="512000" selected="selected">512kbps</option>
+    <option value="0">auto</option>
+  </select>
   <input type="button" id="addBtn" value="Add" />
   <input type="button" id="testBtn" value="Test" />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

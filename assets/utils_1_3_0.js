@@ -171,3 +171,18 @@ jv.utils.escapeHtml=function(text) {
   };
   return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 };
+
+jv.utils.getSelect=function(id) {
+  var el=document.getElementById(id);
+  var v=el.options[el.selectedIndex].value;
+  return v;  
+};
+
+jv.utils.setSelect=function(id,value) {
+  var el=document.getElementById(id);
+  if ( ! el) throw new Error("Wrong id="+id);
+  el.value=value;
+  if (el.selectedIndex < 0) throw new Error("Invalid value="+value+" for "+id);
+  document.activeElement.blur();// otherwise it will catch onkeypressed
+};
+

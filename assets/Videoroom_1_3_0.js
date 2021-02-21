@@ -43,7 +43,10 @@ function init(sp, aView) {
   }
   
   vw=aView;
-  vw.init( sp, { unpublishOwnFeed: unpublishOwnFeed, toggleMute: toggleMute, publishOwnFeed: publishOwnFeed, sendChatMessage: sendChatMessage, die: die } );
+  vw.init( 
+    sp,
+    { unpublishOwnFeed: unpublishOwnFeed, toggleMute: toggleMute, publishOwnFeed: publishOwnFeed, setBitrateCap: setBitrateCap, sendChatMessage: sendChatMessage, die: die }
+  );
   vw.adoptPublishedState(isPublished);
   vw.adjustLayout();
   window.onresize=function() { 
@@ -123,6 +126,7 @@ function attachAsPublisher() {
         // This controls allows us to override the global room bitrate cap
         //$('#bitrate').parent().parent().removeClass('hide').show();
         //setBitrateCap();
+        //setBitrateCap(0);
       },
       onmessage: function(msg, jsep) {
         Janus.debug(" ::: Got a message (publisher) :::", msg);
@@ -251,20 +255,20 @@ function sendJoinPublisherRequest() {
   sfutest.send({ message: register });
 }
 
-function setBitrateCap() {
-// just copied -- has to be rewritten and tested to be useful
-  $('#bitrate a').click(function() {
-    var id = $(this).attr("id");
-    var bitrate = parseInt(id)*1000;
-    if(bitrate === 0) {
-      Janus.log("Not limiting bandwidth via REMB");
-    } else {
-      Janus.log("Capping bandwidth to " + bitrate + " via REMB");
-    }
-    $('#bitrateset').html($(this).html() + '<span class="caret"></span>').parent().removeClass('open');
-    sfutest.send({ message: { request: "configure", bitrate: bitrate }});
+function setBitrateCap(bps) {
+  var bitrate = parseInt(bps);
+  if (bitrate != bitrate) { // NaN
+    throw new Error("Wrong BPS="+bps);
     return false;
-  });
+  }
+  if (bitrate === 0) {
+    Janus.log("Not limiting bandwidth via REMB");
+  } 
+  else {
+    Janus.log("Capping bandwidth to " + bitrate + " via REMB");
+  }
+  sfutest.send({ message: { request: "configure", bitrate: bitrate }});
+  return false;
 }
 
 function followAllPublishers(list) {
@@ -334,6 +338,8 @@ function publishOwnFeed(useAudio) {
 				// so the browser supports it), and (2) the codec is in the list of
 				// allowed codecs in a room. With respect to the point (2) above,
 				// refer to the text in janus.plugin.videoroom.jcfg for more details
+        //alert(vw.getBitrate);
+        if (vw.getBitrate instanceof Function) { publish.bitrate=parseInt(vw.getBitrate()); }
 				sfutest.send({ message: publish, jsep: jsep });
 			},
 			error: function(error) {
