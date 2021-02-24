@@ -36,10 +36,7 @@ jv.ResponsiveGrid=function(container) {
     var halfScreenL=Math.floor(0.95*Math.min( w/2, (h/1)*(single.w/single.h) )),
         halfScreenP=Math.floor(0.95*Math.min( w/1, (h/2)*(single.w/single.h) )),
         tableL=[{},{n:1, wrap: "nowrap", width: halfScreenL+"px", height: Math.floor(halfScreenL*single.h/single.w)+"px", direction: direction }],
-        //[{n:0, wrap: "nowrap", width: halfScreenL, direction: direction },{n:1, wrap: "nowrap", width: halfScreenL, direction: direction },{n:2, wrap: "nowrap", width: halfScreenL, direction: direction}],
         tableP=[{},{n:1, wrap: "nowrap", width: halfScreenP+"px", height: Math.floor(halfScreenP*single.h/single.w)+"px", direction: direction }];
-        //[{n:0, wrap: "nowrap", basis:"auto", direction: direction },{n:1, wrap: "nowrap", basis:"auto", direction: direction },{n:2, wrap: "wrap", width: halfScreenP, basis:"auto", direction: direction}],
-        
         
     if (isPortrait) { 
       table=tableP;
@@ -51,7 +48,7 @@ jv.ResponsiveGrid=function(container) {
       rows=1;
       cols=1;//2;
     }
-    console.log("w/h:"+w+"/"+h+", aspect="+aAspect);
+    //console.log("w/h:"+w+"/"+h+", aspect="+aAspect);
     for (var i=2; i <= maxCount; i+=1) {
       if (isPortrait) {
         rows=Math.ceil(i/cols); cols2=cols+1; rows2=Math.ceil(i/cols2);// try add one column
@@ -61,24 +58,20 @@ jv.ResponsiveGrid=function(container) {
       }
       compr1=compression(w,h,cols,rows,single);
       compr2=compression(w,h,cols2,rows2,single);
-      console.log(i+" : "+cols2+"x"+rows2+" < "+cols+"x"+rows+" : "+ (compr2 < compr1));
+      //console.log(i+" : "+cols2+"x"+rows2+" < "+cols+"x"+rows+" : "+ (compr2 < compr1));
       if (compr2 < compr1) { 
         cols = cols2;
         rows = rows2;
       }
-      //basis=Math.floor(Math.min(100/cols, w*100*rows*single.h/(h*single.w)))+"%";
       width=Math.floor( fill.w*Math.min( w/cols, (h/(rows))*(single.w/single.h) ));
       table.push({
         n: i, 
         wrap: rows > 1 ? "wrap" : "nowrap",
-        //c1: compr1, c2: compr2, 
-        //basis: basis,
         width: width+"px",
         height: Math.floor(width*single.h/single.w)+"px",
-        //direction: direction
       });
     }// end for
-    console.log(jv.utils.dumpArray(table));
+    //console.log(jv.utils.dumpArray(table));
     return table;
   }
   

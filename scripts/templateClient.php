@@ -25,8 +25,8 @@
     <option value="512000" selected="selected">512kbps</option>
     <option value="0">auto</option>
   </select>
-  <input type="button" id="addBtn" value="Add" />
-  <input type="button" id="testBtn" value="Test" />
+  <input type="button" id="addBtn" value="Add" style="display:none;" />
+  <input type="button" id="testBtn" value="Test"  style="display:none;" />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <a href="?" id="exitBtn" style="float: right;"><button>Exit</button></a>
   <p id="accountBottomAlertP"></p>
@@ -37,8 +37,9 @@
 <p>&nbsp;</p>
 
 <fieldset id="chatPanel">
-  <input type="text" id="textInp" name="text" maxlength="256" placeholder="Chat message" autocomplete="off">
-  <input type="button" id="sendBtn" name="send" value="Send">
+  <input type="text" id="textInp" name="text" maxlength="256" placeholder="Chat message" autocomplete="off" />
+  <input type="button" id="sendBtn" name="send" value="Send" />
+  <input type="file" id="fileSendInp" />
   <p id="chatAlertP"></p>
   <div id="chatText"></div>
 </fieldset>
@@ -53,6 +54,7 @@
 <script src="<?php echo $pathBias."assets/".version("utils.js",$pathBias); ?>"></script>
 <script src="<?php echo $pathBias."assets/".version("ResponsiveGrid.js",$pathBias); ?>"></script>
 <script src="<?php echo $pathBias."assets/".version("ViewVR.js",$pathBias); ?>"></script>
+<script src="<?php echo $pathBias."assets/".version("FileTransceiver.js",$pathBias); ?>"></script>
 <script src="<?php echo $pathBias."assets/".version("Videoroom.js",$pathBias); ?>"></script>
 
 <script>
@@ -85,7 +87,7 @@ if (found.outcome !== true) {
 var vr=new jv.Videoroom();
 var view=new jv.ViewVR();
 vr.init(sp,view);
-vr.add();
+//vr.add();
 vr.run();
 
 </script>

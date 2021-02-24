@@ -15,8 +15,9 @@ jv.ViewVR = function() {
     if ( ! aspectTimer) aspectTimer=setInterval(watchAspectRatio,1000);
     //setTimeout(function() { moveSpans("1/1"); },5000); // DEBUG
     
-    $$("bitrateSelect").onclick=function() { cb.setBitrateCap(getBitrate()); }
+    $$("bitrateSelect").onclick=function() { cb.setBitrateCap(getBitrate()); };
     $$("sendBtn").onclick=function() { cb.sendChatMessage(takeChatMessage()); };
+    $$("fileSendInp").onchange=function() { cb.sendFile(this.files[0]); };
   }
   
   function aalert(s,cb) {
@@ -305,6 +306,20 @@ jv.ViewVR = function() {
     [].forEach.call( spanName, function(el) { el.style.top=edging; } );
   }
   
+  function chatAlert(s,shouldReplace,cb) {
+    if (shouldReplace) {
+      $$('chatAlertP').innerHTML=s;
+      return;
+    }
+    var sep=" ",
+        ss=$$('chatAlertP').innerHTML;
+    if ( ! s) ss="";
+    else if (ss) ss=ss+sep+s;
+    else ss=s;
+    $$('chatAlertP').innerHTML=ss;
+    if (typeof cb === "function") cb();
+  }
+  
   function addToChat(dataObj) {
     if (typeof dataObj !== "object") throw new Error("Not an object:"+dataObj);
     var sender=dataObj.from;
@@ -312,6 +327,10 @@ jv.ViewVR = function() {
     var msg=dataObj.message;
     if ( ! msg) msg="[empty]";
     var str="<b>"+jv.utils.escapeHtml(sender)+"</b> : "+jv.utils.escapeHtml(msg);
+    appendToChat(str);
+  }
+  
+  function appendToChat(str) {
     var chatText=$$("chatText");
     var content=chatText.innerHTML;
     var sep="<br/>";
@@ -320,13 +339,27 @@ jv.ViewVR = function() {
     chatText.innerHTML=content;
   }
   
+  function addBlobToChat(blob,sender,metadata) {
+    if ( ! (blob instanceof Blob)) throw new Error("Not a Blob");
+    const downloadLink = document.createElement("A");
+    //downloadLink.id="downloadLink";
+    downloadLink.href = URL.createObjectURL(blob);
+    if ( ! metadata) downloadLink.innerHTML="The file";
+    else { 
+      downloadLink.innerHTML=downloadLink.download=jv.utils.escapeHtml(metadata.name);
+    }
+    var str="<b>"+jv.utils.escapeHtml(sender)+"</b> : "+downloadLink.outerHTML+" ("+jv.utils.escapeHtml(blob.size)+"B)";
+    if (metadata.size && (blob.size != metadata.size)) str += " Warning! sender's size="+metadata.size+"B";
+    appendToChat(str);
+  }
+  
   function takeChatMessage() {
     var v=$$("textInp").value;
     $$("textInp").value="";
     return v;
   }
 
-  return { init: init, alert: aalert, redefineExit: redefineExit, adoptPublishedState: adoptPublishedState, getBitrate: getBitrate, adjustLayout: adjustLayout, capVideo: capVideo, uncapVideo: uncapVideo, adoptVideo: adoptVideo, addVideo: addVideo, removeVideo: removeVideo, muteIndicator: muteIndicator, addToChat: addToChat };
+  return { init: init, alert: aalert, redefineExit: redefineExit, adoptPublishedState: adoptPublishedState, getBitrate: getBitrate, adjustLayout: adjustLayout, capVideo: capVideo, uncapVideo: uncapVideo, adoptVideo: adoptVideo, addVideo: addVideo, removeVideo: removeVideo, muteIndicator: muteIndicator, addToChat: addToChat, addBlobToChat: addBlobToChat, chatAlert: chatAlert };
 
 }// end ViewVR
 

@@ -23,7 +23,8 @@ var vw,
     doSimulcast =  false,//(getQueryStringValue("simulcast") === "yes" || getQueryStringValue("simulcast") === "true");
     doSimulcast2 = false,//(getQueryStringValue("simulcast2") === "yes" || getQueryStringValue("simulcast2") === "true");
     subscriber_mode = false,//(getQueryStringValue("subscriber-mode") === "yes" || getQueryStringValue("subscriber-mode") === "true");
-    iceServers=[{ "urls" : "stun:stun.l.google.com:19302" }]
+    iceServers = [{ "urls" : "stun:stun.l.google.com:19302" }],
+    fr = null
 ;
 
 //$(document).ready(run);
@@ -45,7 +46,7 @@ function init(sp, aView) {
   vw=aView;
   vw.init( 
     sp,
-    { unpublishOwnFeed: unpublishOwnFeed, toggleMute: toggleMute, publishOwnFeed: publishOwnFeed, setBitrateCap: setBitrateCap, sendChatMessage: sendChatMessage, die: die }
+    { unpublishOwnFeed: unpublishOwnFeed, toggleMute: toggleMute, publishOwnFeed: publishOwnFeed, setBitrateCap: setBitrateCap, sendChatMessage: sendChatMessage, sendFile: sendFile, die: die }
   );
   vw.adoptPublishedState(isPublished);
   vw.adjustLayout();
@@ -503,12 +504,31 @@ function newRemoteFeed(id, display, audio, video) {
 function receiveData(data) {
   var dataObj=null,
       err="Failed to receive data";
-      
-  if (typeof data === "object") dataObj=data;  
+  
+  //alert(data);
+  if (typeof data === "object") {
+    dataObj=data;
+    if ( ! fr || ! fr.getBusy()) {
+      vw.chatAlert("Binary data without header");
+      return;
+    }
+    fr.adoptChunk(dataObj);
+    return;
+  }
   else {
     try { dataObj=JSON.parse(data); }
     catch (e) { err="Unparsable data:"+data; }
-  }  
+  }
+  if (dataObj.type === "fileData") {
+    if (fr && fr.getBusy()) {
+      vw.chatAlert("File overflow");
+      return;
+    }
+    if ( ! fr) fr=new jv.FileTransceiver(vw,sfutest,myusername);
+    fr.adoptMeta(dataObj);
+    console.log("Got file data");
+    return;
+  }
   if (dataObj) vw.addToChat(dataObj);//jv.utils.dumpArray(data)
   else vw.alert(err);
 }
@@ -522,25 +542,19 @@ function sendChatMessage(str) {
   });
 }
 
-// Helper to parse query string
-function getQueryStringValue(name) {
-	name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-	var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-		results = regex.exec(location.search);
-	return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+function sendFile(f) {
+  new jv.FileTransceiver(vw,sfutest,myusername).send(f);
 }
 
 // Helpers to create Simulcast-related UI, if enabled
 function addSimulcastButtons(feed, temporal) {}
-
 function updateSimulcastButtons(feed, substream, temporal) {}
-
 function onConsentDialog(on) {}
 
 // debugging tools
 function add() {
-  $$("addBtn").style.display="none";
-  $$("testBtn").style.display="none";
+  $$("addBtn").style.display="";
+  $$("testBtn").style.display="";
   $$("addBtn").onclick=function() {
     var stream=mystream;
     var v1=document.querySelectorAll("#remotevideo1");
@@ -570,7 +584,6 @@ function add() {
     }
     testCount += 1;
   };
-  //$$("sendBtn").onclick=function() { sendChatMessage("Hi!!!"); };
 }
 
 function die() {

@@ -169,6 +169,7 @@ jv.utils.escapeHtml=function(text) {
     '"': '&quot;',
     "'": '&#039;'
   };
+  if ( ! (text instanceof String)) return text;
   return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 };
 
@@ -186,3 +187,11 @@ jv.utils.setSelect=function(id,value) {
   document.activeElement.blur();// otherwise it will catch onkeypressed
 };
 
+
+// Helper to parse query string
+jv.utils.getQueryStringValue=function(name) {
+	name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+	var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+		results = regex.exec(location.search);
+	return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+};
