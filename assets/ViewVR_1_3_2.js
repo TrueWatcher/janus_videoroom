@@ -17,7 +17,12 @@ jv.ViewVR = function() {
     
     $$("bitrateSelect").onclick=function() { cb.setBitrateCap(getBitrate()); };
     $$("sendBtn").onclick=function() { cb.sendChatMessage(takeChatMessage()); };
-    $$("fileSendInp").onchange=function() { cb.sendFile(this.files[0]); };
+    $$("fileSendInp").onchange=function() {
+      if (this.files.length == 0) return;
+      cb.sendFile(this.files[0]);
+      this.value=null;
+      //return false;
+    };
   }
   
   function aalert(s,cb) {
@@ -358,6 +363,8 @@ jv.ViewVR = function() {
     $$("textInp").value="";
     return v;
   }
+  
+  function clearFileInput() { $$("fileSendInp").value=null; }
 
   return { init: init, alert: aalert, redefineExit: redefineExit, adoptPublishedState: adoptPublishedState, getBitrate: getBitrate, adjustLayout: adjustLayout, capVideo: capVideo, uncapVideo: uncapVideo, adoptVideo: adoptVideo, addVideo: addVideo, removeVideo: removeVideo, muteIndicator: muteIndicator, addToChat: addToChat, addBlobToChat: addBlobToChat, chatAlert: chatAlert };
 

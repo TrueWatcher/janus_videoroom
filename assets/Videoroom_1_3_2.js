@@ -502,32 +502,19 @@ function newRemoteFeed(id, display, audio, video) {
 }
 
 function receiveData(data) {
-  var dataObj=null,
+  var dataObj=null,r=false,
       err="Failed to receive data";
   
   //alert(data);
+  if ( ! fr) fr=new jv.FileTransceiver(vw,sfutest,myusername);
+  if (r=fr.tryReceiveData(data)) return;
+  
   if (typeof data === "object") {
     dataObj=data;
-    if ( ! fr || ! fr.getBusy()) {
-      vw.chatAlert("Binary data without header");
-      return;
-    }
-    fr.adoptChunk(dataObj);
-    return;
   }
   else {
     try { dataObj=JSON.parse(data); }
     catch (e) { err="Unparsable data:"+data; }
-  }
-  if (dataObj.type === "fileData") {
-    if (fr && fr.getBusy()) {
-      vw.chatAlert("File overflow");
-      return;
-    }
-    if ( ! fr) fr=new jv.FileTransceiver(vw,sfutest,myusername);
-    fr.adoptMeta(dataObj);
-    console.log("Got file data");
-    return;
   }
   if (dataObj) vw.addToChat(dataObj);//jv.utils.dumpArray(data)
   else vw.alert(err);
@@ -543,6 +530,10 @@ function sendChatMessage(str) {
 }
 
 function sendFile(f) {
+  if (fr && fr.getBusy()) {
+    vw.chatAlert("Some file is neing received");
+    return;
+  }
   new jv.FileTransceiver(vw,sfutest,myusername).send(f);
 }
 

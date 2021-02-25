@@ -84,7 +84,7 @@ jv.ResponsiveGrid=function(container) {
   function get(id) {
     var qs=document.getElementById("playerRoom").querySelectorAll("#"+id);
     if ( ! qs || qs.length == 0) {
-      console.log("Not found container "+id);
+      //console.log("Not found container "+id);
       return 0;
     } 
     else if (qs && qs.length > 1) {
@@ -93,7 +93,7 @@ jv.ResponsiveGrid=function(container) {
       return false;
     }
     var div=qs[0];
-    console.log("found container "+id);
+    //console.log("found container "+id);
     return div;
   }
   

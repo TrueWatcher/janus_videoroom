@@ -90,6 +90,9 @@ vr.init(sp,view);
 //vr.add();
 vr.run();
 
+//$$("fileSendInp").files=null;
+//alert( $$("fileSendInp").files.length );
+
 </script>
 
 <?php if ( ! isset($disableTail)) { ?>
