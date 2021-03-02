@@ -23,6 +23,7 @@
     <option value="128000">128kbps</option>
     <option value="256000">256kbps</option>
     <option value="512000" selected="selected">512kbps</option>
+    <option value="1024000">1024kbps</option>
     <option value="0">auto</option>
   </select>
   <input type="button" id="addBtn" value="Add" style="display:none;" />
