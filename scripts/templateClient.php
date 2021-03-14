@@ -55,7 +55,7 @@
 <script src="<?php echo $pathBias."assets/".version("utils.js",$pathBias); ?>"></script>
 <script src="<?php echo $pathBias."assets/".version("ResponsiveGrid.js",$pathBias); ?>"></script>
 <script src="<?php echo $pathBias."assets/".version("ViewVR.js",$pathBias); ?>"></script>
-<script src="<?php echo $pathBias."assets/".version("FileTransceiver.js",$pathBias); ?>"></script>
+<script src="<?php echo $pathBias."assets/".version("FileTransceiverAJAX.js",$pathBias); ?>"></script>
 <script src="<?php echo $pathBias."assets/".version("Videoroom.js",$pathBias); ?>"></script>
 
 <script>

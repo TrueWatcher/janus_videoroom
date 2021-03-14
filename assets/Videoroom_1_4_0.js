@@ -12,6 +12,7 @@ var vw,
     opaqueId = "videoroomtest-"+Janus.randomString(12),
     myroom = 9999,// nonexistent  //1234;	// Demo room
     myusername = null,
+    myroomname = null,
     myid = null,
     mystream = null,
     mypvtid = null, // We use this other ID just to map our subscriptions to us
@@ -24,7 +25,8 @@ var vw,
     doSimulcast2 = false,//(getQueryStringValue("simulcast2") === "yes" || getQueryStringValue("simulcast2") === "true");
     subscriber_mode = false,//(getQueryStringValue("subscriber-mode") === "yes" || getQueryStringValue("subscriber-mode") === "true");
     iceServers = [{ "urls" : "stun:stun.l.google.com:19302" }],
-    fr = null
+    fta = null,
+    maxMediaFolderBytes, maxBlobBytes
 ;
 
 //$(document).ready(run);
@@ -39,6 +41,9 @@ function init(sp, aView) {
   doSimulcast2 = false;//(getQueryStringValue("simulcast2") === "yes" || getQueryStringValue("simulcast2") === "true");
   subscriber_mode = false;//(getQueryStringValue("subscriber-mode") === "yes" || getQueryStringValue("subscriber-mode") === "true");
   myusername = sp.user;
+  myroomname = sp.realm;
+  maxMediaFolderBytes = sp.maxMediaFolderBytes;
+  maxBlobBytes = sp.maxBlobBytes;
   if (sp.turnPort && sp.turnUser && sp.turnCredential) {
     iceServers=addIceServers(iceServers, sp.turnPort, window.location.hostname, sp.turnUser, sp.turnCredential);
   }
@@ -54,6 +59,9 @@ function init(sp, aView) {
     jv.screenParams=jv.utils.getScreenParams(); 
     vw.adjustLayout(); 
   };
+  
+  fta = new jv.FileTransceiverAJAX(onAjaxReply,sp);
+  fta.sendGetCatalog();
 }
 
 function addIceServers(iceServers,port,domain,username,credential) {
@@ -506,8 +514,9 @@ function receiveData(data) {
       err="Failed to receive data";
   
   //alert(data);
-  if ( ! fr) fr=new jv.FileTransceiver(vw,sfutest,myusername);
-  if (r=fr.tryReceiveData(data)) return;
+  // P2P reciever
+  //if ( ! fr) fr=new jv.FileTransceiver(vw,sfutest,myusername);
+  //if (r=fr.tryReceiveData(data)) return;
   
   if (typeof data === "object") {
     dataObj=data;
@@ -516,6 +525,7 @@ function receiveData(data) {
     try { dataObj=JSON.parse(data); }
     catch (e) { err="Unparsable data:"+data; }
   }
+  if (dataObj && dataObj.type == "chatLink") vw.addLinkToChat(dataObj);
   if (dataObj) vw.addToChat(dataObj);//jv.utils.dumpArray(data)
   else vw.alert(err);
 }
@@ -529,12 +539,56 @@ function sendChatMessage(str) {
   });
 }
 
-function sendFile(f) {
+function sendFileP2P(f) {
   if (fr && fr.getBusy()) {
     vw.chatAlert("Some file is neing received");
     return;
   }
   new jv.FileTransceiver(vw,sfutest,myusername).send(f);
+}
+
+function sendFile(f) {
+  if (f.size > maxBlobBytes) {
+    vw.chatAlert("File "+f.name+" is too large:"+f.size+", allowed "+maxBlobBytes);
+    return;
+  }
+  fta.sendFile(f);
+}
+
+function onAjaxReply(data) {
+  if (data.error) {
+    vw.chatAlert("Error! "+data.error);
+    return;
+  }
+  if (data.alert === "upload OK") {
+    if (data.user != myusername || data.realm != myroomname) {
+      console.log("Mis-addressed message to "+data.user+"@"+data.realm);
+      return;
+    }
+    var m={ type: "chatLink", from: myusername, href: data.href, nameExt: data.nameExt, size: data.size, expire: data.expire };
+    if ( ! sfutest) { // DEBUG
+      vw.addLinkToChat(m);
+      vw.chatAlert("",true);
+      return; 
+    }
+    // notify the people about my brand new shared file
+    sfutest.data({
+      text:    JSON.stringify(m),
+      success: function() { 
+        vw.addLinkToChat(m);
+        vw.chatAlert("",true);
+      }
+    });
+    return;
+  }
+  if (data.catalog) {
+    data.catalog.forEach(function(line) {
+      var m={ type: "chatLink", from: line.user, href: line.href, nameExt: line.nameExt, size: line.size, expire: line.expire };
+      vw.addLinkToChat(m);
+    });
+    return;
+  }
+  if (data.alert) vw.chatAlert(data.alert);
 }
 
 // Helpers to create Simulcast-related UI, if enabled
@@ -575,9 +629,12 @@ function add() {
     }
     testCount += 1;
   };
+  $$("addBtn").onclick=function() { fta.sendClearMedia(); }
+  $$("testBtn").onclick=function() { fta.sendRemoveExpired(); }
 }
 
 function die() {
+  fta.sendRemoveExpired();
   janus.destroy({ unload: true, cleanupHandles: true });
 }
 

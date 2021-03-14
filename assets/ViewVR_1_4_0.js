@@ -358,6 +358,26 @@ jv.ViewVR = function() {
     appendToChat(str);
   }
   
+  function addLinkToChat(dataObj) {
+    if (typeof dataObj !== "object") throw new Error("Not an object:"+dataObj);
+    var sender=dataObj.from;
+    if ( ! sender) return;
+    var href=dataObj.href;
+    if ( ! href) return;
+    const downloadLink = document.createElement("A");
+    //downloadLink.id="downloadLink";
+    downloadLink.href = href;
+    downloadLink.target="_blank";
+    if ( ! dataObj.nameExt) downloadLink.innerHTML="The file";
+    else { 
+      downloadLink.innerHTML=jv.utils.escapeHtml(dataObj.nameExt);
+      //downloadLink.download=jv.utils.escapeHtml(dataObj.nameExt);
+    }
+    var str="<b>"+jv.utils.escapeHtml(sender)+"</b> : "+downloadLink.outerHTML+" ("+jv.utils.escapeHtml(dataObj.size)+"B)";
+    if (dataObj.expire) str += " expires "+dataObj.expire;
+    appendToChat(str);
+  }
+  
   function takeChatMessage() {
     var v=$$("textInp").value;
     $$("textInp").value="";
@@ -366,7 +386,7 @@ jv.ViewVR = function() {
   
   function clearFileInput() { $$("fileSendInp").value=null; }
 
-  return { init: init, alert: aalert, redefineExit: redefineExit, adoptPublishedState: adoptPublishedState, getBitrate: getBitrate, adjustLayout: adjustLayout, capVideo: capVideo, uncapVideo: uncapVideo, adoptVideo: adoptVideo, addVideo: addVideo, removeVideo: removeVideo, muteIndicator: muteIndicator, addToChat: addToChat, addBlobToChat: addBlobToChat, chatAlert: chatAlert };
+  return { init: init, alert: aalert, redefineExit: redefineExit, adoptPublishedState: adoptPublishedState, getBitrate: getBitrate, adjustLayout: adjustLayout, capVideo: capVideo, uncapVideo: uncapVideo, adoptVideo: adoptVideo, addVideo: addVideo, removeVideo: removeVideo, muteIndicator: muteIndicator, addToChat: addToChat, addLinkToChat: addLinkToChat, addBlobToChat: addBlobToChat, chatAlert: chatAlert };
 
 }// end ViewVR
 

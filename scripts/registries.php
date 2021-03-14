@@ -83,6 +83,10 @@ class PageRegistry extends SingletAssocArrayWrapper {
     "maxPublisherCount"=>5,
     "wsServerPort"=>8989,
     "password"=>"",
+    "mediaFolder"=>"share",
+    "maxBlobBytes"=>1500000,
+    "maxMediaFolderBytes"=>1500000,
+    "clipLifetimeSec"=>900,
   ];
   
   /**
@@ -112,6 +116,7 @@ class PageRegistry extends SingletAssocArrayWrapper {
       //"allowAuthByRequestId"=>1,// Credentials
       //"allowPlayerNameInInput"=>1,// Credentials
     ];
+    $a=self::addServerParams($a);
     return array_merge(self::$commonParams,$a);
   }
   

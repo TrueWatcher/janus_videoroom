@@ -1,1 +1,5 @@
 rooms/jv/
+*/share/
+*.webm
+*.mp4
+*/catalog.json

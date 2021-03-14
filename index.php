@@ -17,7 +17,7 @@ try {
   $pr=PageRegistry::getInstance( 0, PageRegistry::getDefaultsClient() );
   //$pr->overrideValuesBy($pageEntryParams["PageRegistry"]);
   $pr->overrideValuesBy($iniParams["common"]);
-  //$pr->overrideValuesBy($iniParams["client"]);
+  $pr->overrideValuesBy($iniParams["client"]);
   //$pr->dump();
   checkPsw($pathBias,$input,$pr);
 
@@ -26,7 +26,7 @@ try {
   ];
   $serverParams=$pr->exportByList( [
     "serverName", "title", "reportErrors", "pathBias", "wsServerPort", "roomId", "maxPublisherCount",
-    "turnPort", "turnUser", "turnCredential"
+    "turnPort", "turnUser", "turnCredential", "maxMediaFolderBytes", "maxBlobBytes"
   ] , $serverParams);
   
   include("scripts/templateClient.php");
