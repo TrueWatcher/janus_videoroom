@@ -109,6 +109,7 @@ function checkFields($input) {
   else if ( isset($input["description"]) && strlen($input["description"]) > 200 ) {
     $input["description"]=substr($input["description"],0,100);
   }
+  if (isset($input["nameExt"]) && @$input["nameExt"][0] === ".") $r="Wrong NAMEEXT";
   if (! isset($input["mime"])) $input["mime"]="";
   $input["duration"]=0;
   if ($r !== true) throw new DataException($r);

@@ -532,6 +532,7 @@ function receiveData(data) {
 
 function sendChatMessage(str) {
   if ( ! sfutest) return;
+  if ( ! str) return;
   var m={ type: "chatMessage", message: str, from: myusername };
   sfutest.data({
     text: JSON.stringify(m),
@@ -548,6 +549,7 @@ function sendFileP2P(f) {
 }
 
 function sendFile(f) {
+  if ( ! f || ! (f instanceof File)) return;
   if (f.size > maxBlobBytes) {
     vw.chatAlert("File "+f.name+" is too large:"+f.size+", allowed "+maxBlobBytes);
     return;

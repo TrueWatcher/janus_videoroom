@@ -1,7 +1,7 @@
 <?php
 
 class Inventory {
-  const EMPTY="[]";
+  private static $EMPTY="[]";
   private $targetPath="";
   //const REALMS="rooms/";
   private $mediaFolderName="media";
@@ -58,16 +58,16 @@ class Inventory {
       if (empty($this->data)) return;// to avoid rewriting and changing modtime
       $this->data=[];
       $this->total=0;
-      file_put_contents($myFile,self::EMPTY);
+      file_put_contents($myFile,self::$EMPTY);
       return;
     }
     if ( ! file_exists($myFile)) { 
-      $myFileContent=self::EMPTY;
+      $myFileContent=self::$EMPTY;
       file_put_contents($myFile,$myFileContent);
     }
     else { 
       $myFileContent=file_get_contents($myFile);
-      if ( ! is_string($myFileContent) || empty($myFileContent)) $myFileContent=self::EMPTY;
+      if ( ! is_string($myFileContent) || empty($myFileContent)) $myFileContent=self::$EMPTY;
     }
     $this->data=json_decode($myFileContent);
     if ( ! is_array($this->data)) throw new DataException("Non-array DATA");
